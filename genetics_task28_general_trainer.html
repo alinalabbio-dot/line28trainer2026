@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Большой тренажёр: генетические задачи 28 линии</title>
+  <style>
+    :root {
+      --bg: #f7f6ef;
+      --ink: #24302b;
+      --muted: #66736e;
+      --card: #ffffff;
+      --green: #2f7d55;
+      --green-dark: #1f5f3e;
+      --green-soft: #e3f1e8;
+      --orange: #df8d37;
+      --orange-soft: #fff0dc;
+      --purple: #7458c8;
+      --purple-soft: #eee9ff;
+      --blue: #3d7dbb;
+      --blue-soft: #e7f1ff;
+      --red: #b83f3f;
+      --red-soft: #fde7e7;
+      --yellow-soft: #fff8df;
+      --yellow-line: #efd889;
+      --line: #e1e6df;
+      --shadow: 0 14px 34px rgba(40, 52, 45, 0.12);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(47, 125, 85, 0.16), transparent 35%),
+        radial-gradient(circle at top right, rgba(223, 141, 55, 0.17), transparent 34%),
+        var(--bg);
+    }
+
+    .app { max-width: 1220px; margin: 0 auto; padding: 28px 18px 48px; }
+
+    header {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 18px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .hero, .score-card, .panel, .task-card, .finish-card {
+      background: rgba(255,255,255,0.94);
+      border: 1px solid rgba(225, 230, 223, 0.96);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero { padding: 30px; position: relative; overflow: hidden; }
+
+    .hero::after {
+      content: "28";
+      position: absolute;
+      right: 24px;
+      bottom: -40px;
+      font-size: 150px;
+      font-weight: 900;
+      color: rgba(47, 125, 85, 0.08);
+      letter-spacing: -6px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(30px, 4.2vw, 52px);
+      line-height: 1.03;
+      letter-spacing: -1.5px;
+    }
+
+    h2 { margin: 0 0 14px; font-size: 29px; letter-spacing: -0.7px; }
+    h3 { margin: 0 0 10px; font-size: 21px; }
+
+    .subtitle {
+      margin: 0;
+      max-width: 820px;
+      font-size: 18px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+
+    .student-box {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 18px;
+      background: var(--green-soft);
+      border: 1px solid #bdd8c5;
+      max-width: 560px;
+    }
+
+    .student-box label {
+      display: block;
+      color: var(--green-dark);
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .student-box input {
+      width: 100%;
+      padding: 12px 13px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      font-size: 16px;
+      outline: none;
+      font-weight: 760;
+      background: #fff;
+    }
+
+    .student-box input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(47, 125, 85, 0.12);
+    }
+
+    .report-card {
+      max-width: 820px;
+      margin: 22px auto 0;
+      padding: 18px;
+      border-radius: 20px;
+      background: #f8faf8;
+      border: 1px solid var(--line);
+      text-align: left;
+    }
+
+    .report-card h3 {
+      color: var(--green-dark);
+    }
+
+    .report-card p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .report-status {
+      margin-top: 12px;
+      color: var(--green-dark);
+      font-weight: 850;
+      min-height: 20px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      font-weight: 850;
+      font-size: 13px;
+    }
+
+    .score-card {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 225px;
+    }
+
+    .score-label {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .score {
+      margin: 8px 0 4px;
+      color: var(--green-dark);
+      font-size: 54px;
+      font-weight: 900;
+      letter-spacing: -2px;
+    }
+
+    .progress-wrap {
+      width: 100%;
+      height: 12px;
+      background: #eef2ed;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 14px 0 8px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--green), var(--orange));
+      border-radius: 999px;
+      transition: width 0.35s ease;
+    }
+
+    .small-muted { color: var(--muted); font-size: 14px; line-height: 1.45; }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 18px 0;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: 10px 0;
+      background: rgba(247, 246, 239, 0.9);
+      backdrop-filter: blur(10px);
+    }
+
+    button { font: inherit; border: 0; cursor: pointer; }
+
+    .tab {
+      border-radius: 999px;
+      padding: 11px 15px;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-weight: 850;
+      transition: all 0.18s ease;
+    }
+
+    .tab.active {
+      background: var(--green-dark);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 8px 18px rgba(31, 95, 62, 0.22);
+    }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .panel, .task-card { padding: 22px; margin-bottom: 18px; }
+
+    .type-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .type-card {
+      border-radius: 20px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      background: #fff;
+      line-height: 1.5;
+      min-height: 150px;
+    }
+
+    .type-card.green { background: var(--green-soft); border-color: #bdd8c5; }
+    .type-card.orange { background: var(--orange-soft); border-color: #efc089; }
+    .type-card.purple { background: var(--purple-soft); border-color: #cdc1ff; }
+    .type-card.blue { background: var(--blue-soft); border-color: #bfd5ed; }
+
+    .type-card h3 { margin-bottom: 8px; }
+    .type-card p { margin: 0; color: var(--muted); }
+    .type-card ul { margin: 8px 0 0 20px; padding: 0; }
+    .type-card li { margin: 4px 0; }
+
+    .algorithm {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 18px;
+      padding: 14px;
+      min-height: 120px;
+      line-height: 1.4;
+      font-weight: 760;
+    }
+
+    .step span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .task-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .task-head { display: flex; gap: 12px; align-items: flex-start; }
+
+    .task-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      font-weight: 900;
+      flex: 0 0 auto;
+      padding: 0 9px;
+    }
+
+    .task-title {
+      font-size: 22px;
+      font-weight: 900;
+      margin: 0 0 5px;
+      letter-spacing: -0.4px;
+    }
+
+    .task-text { color: var(--muted); margin: 0; line-height: 1.45; }
+
+    .points {
+      background: var(--yellow-soft);
+      color: #836018;
+      border: 1px solid var(--yellow-line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 900;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .fragment, .full-condition, .note-card {
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: 18px;
+      background: #f8faf8;
+      border: 1px solid var(--line);
+      font-size: 17px;
+      line-height: 1.5;
+      font-weight: 740;
+    }
+
+    .fragment::before {
+      content: "Фрагмент условия";
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+      font-weight: 900;
+    }
+
+    .full-condition::before {
+      content: "Условие задачи";
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+      font-weight: 900;
+    }
+
+    .note-card {
+      background: var(--purple-soft);
+      border-color: #cdc1ff;
+      color: #443579;
+    }
+
+    .options, .sort-grid {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .option {
+      width: 100%;
+      text-align: left;
+      padding: 13px 14px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      font-weight: 760;
+      transition: all 0.18s ease;
+      line-height: 1.35;
+    }
+
+    .option:hover {
+      transform: translateY(-1px);
+      border-color: #adcbb5;
+      box-shadow: 0 7px 16px rgba(40, 52, 45, 0.08);
+    }
+
+    .option.selected, .option.correct {
+      background: var(--green-soft);
+      border-color: var(--green);
+      color: var(--green-dark);
+    }
+
+    .option.wrong {
+      background: var(--red-soft);
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .sort-item {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 13px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .sort-item strong { line-height: 1.35; }
+
+    .sort-item select {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 9px;
+      background: #fff;
+      font-weight: 850;
+      min-width: 270px;
+      color: var(--ink);
+    }
+
+    .answer-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .answer-box {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .answer-box label {
+      display: block;
+      font-weight: 900;
+      margin-bottom: 8px;
+      color: var(--green-dark);
+      text-align: left;
+    }
+
+    .answer-box input {
+      width: 100%;
+      padding: 12px 13px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      font-size: 16px;
+      outline: none;
+      font-weight: 760;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+      align-items: center;
+    }
+
+    .primary, .secondary, .ghost {
+      border-radius: 14px;
+      padding: 12px 15px;
+      font-weight: 900;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .primary {
+      background: var(--green-dark);
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(31, 95, 62, 0.20);
+    }
+
+    .secondary {
+      background: var(--green-soft);
+      color: var(--green-dark);
+      border: 1px solid #bdd8c5;
+    }
+
+    .ghost {
+      background: #fff;
+      color: var(--muted);
+      border: 1px solid var(--line);
+    }
+
+    .primary:hover, .secondary:hover, .ghost:hover { transform: translateY(-1px); }
+
+    .feedback {
+      display: none;
+      margin-top: 14px;
+      border-radius: 16px;
+      padding: 14px;
+      line-height: 1.5;
+      font-weight: 680;
+    }
+
+    .feedback.show { display: block; }
+    .feedback.good { background: var(--green-soft); border: 1px solid #b9d8c2; color: var(--green-dark); }
+    .feedback.bad { background: var(--red-soft); border: 1px solid #e7b7b7; color: #7e2828; }
+    .feedback.neutral { background: var(--yellow-soft); border: 1px solid var(--yellow-line); color: #775816; }
+
+    .finish-card { padding: 30px; text-align: center; }
+    .big-emoji { font-size: 64px; margin-bottom: 8px; }
+
+    @media (max-width: 980px) {
+      header, .type-grid { grid-template-columns: 1fr; }
+      .algorithm { grid-template-columns: 1fr; }
+      .task-top { flex-direction: column; }
+      .sort-item { flex-direction: column; align-items: stretch; }
+      .sort-item select { width: 100%; min-width: 0; }
+      nav { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="hero">
+        <h1>Большой тренажёр:<br />генетические задачи 28 линии</h1>
+        <p class="subtitle">Тренировка на распознавание типа задачи, ключевых фраз, приёмов решения и формулировок пояснений для развёрнутого ответа.</p>
+        <div class="badge-row">
+          <span class="badge">🔎 распознать тип</span>
+          <span class="badge">🧬 выбрать закон</span>
+          <span class="badge">✍️ написать пояснение</span>
+          <span class="badge">🎯 ЕГЭ-формат</span>
+        </div>
+
+        <div class="student-box">
+          <label for="studentName">Введи имя</label>
+          <input id="studentName" type="text" placeholder="например: Маша" autocomplete="name" />
+        </div>
+      </div>
+
+      <div class="score-card">
+        <div>
+          <div class="score-label">Текущий результат</div>
+          <div class="score"><span id="score">0</span>/<span id="maxScore">0</span></div>
+          <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+          <div class="small-muted" id="progressText">Пока ничего не проверено.</div>
+        </div>
+        <button class="secondary" data-action="reset">Начать заново</button>
+      </div>
+    </header>
+
+    <nav>
+      <button class="tab active" data-section-target="map">1. Карта типов</button>
+      <button class="tab" data-section-target="markers">2. Фразы-маркеры</button>
+      <button class="tab" data-section-target="algorithms">3. Алгоритмы</button>
+      <button class="tab" data-section-target="explain">4. Пояснения</button>
+      <button class="tab" data-section-target="diagnostics">5. Распознавание</button>
+      <button class="tab" data-section-target="practice">6. Практика</button>
+      <button class="tab" data-section-target="finish">Итог</button>
+    </nav>
+
+    <section id="map" class="section active">
+      <div class="panel">
+        <h2>Карта типов задач</h2>
+        <p class="subtitle">В 28 линии важно не просто решить скрещивание, а объяснить, что происходит: какой закон или приём проявляется и по каким признакам это видно.</p>
+        <div class="type-grid">
+          <div class="type-card green"><h3>Независимое наследование</h3><p>Гены находятся в разных парах гомологичных хромосом. В пояснении называем закон независимого наследования признаков.</p></div>
+          <div class="type-card orange"><h3>Анализирующее скрещивание</h3><p>Скрещивание с рецессивной гомозиготой или дигомозиготой. Нужно указать, какую особь проверяют.</p></div>
+          <div class="type-card purple"><h3>Неполное доминирование</h3><p>Появляется промежуточный признак: доминантный аллель не полностью подавляет рецессивный.</p></div>
+          <div class="type-card blue"><h3>Сцепление генов</h3><p>Полное: кроссинговера нет. Неполное: две большие и две маленькие группы, рекомбинанты появляются из-за кроссинговера.</p></div>
+          <div class="type-card green"><h3>Сцепление с полом</h3><p>Ген находится на X-хромосоме или условие сообщает гетерогаметный пол. Нужно объяснить, кто от кого получает X-хромосому.</p></div>
+          <div class="type-card orange"><h3>Летальный аллель</h3><p>Расщепление искажено: например, вместо 3:1 получилось 2:1. Это может указывать на гибель эмбрионов.</p></div>
+          <div class="type-card purple"><h3>Множественный аллелизм</h3><p>У одного гена больше двух вариантов аллелей. В задачах часто есть дополнительный вопрос.</p></div>
+          <div class="type-card blue"><h3>Группы крови</h3><p>Система AB0: множественный аллелизм и кодоминирование. Iᴬ и Iᴮ проявляются вместе в IV группе.</p></div>
+          <div class="type-card green"><h3>Что всегда нужно в пояснении</h3><p>Ответ на вопрос задачи + общее описание происходящего: закон, явление, приём скрещивания и конкретика по этой задаче.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="markers" class="section">
+      <div class="task-card" data-task="mk1" data-points="5">
+        <div class="task-top"><div class="task-head"><div class="task-number">1</div><div><p class="task-title">Распредели фразы-маркеры</p><p class="task-text">Выбери, какой тип задачи подсказывает каждая фраза.</p></div></div><div class="points">5 баллов</div></div>
+        <div class="sort-grid" data-answer='{"гены расположены в разных парах гомологичных хромосом":"независимое наследование","скрестили с рецессивной дигомозиготой":"анализирующее скрещивание","часть потомства имеет промежуточный признак":"неполное доминирование","все гибриды F₁ идентичны по генотипу и фенотипу":"единообразие F₁","гены полностью сцеплены, кроссинговер не происходит":"полное сцепление","две многочисленные и две малочисленные фенотипические группы":"неполное сцепление","ген находится на X-хромосоме":"сцепление с полом","гетерогаметным является мужской пол":"сцепление с полом","расщепление 2:1 вместо 3:1":"летальный аллель","у гена несколько вариантов аллелей":"множественный аллелизм","Iᴬ и Iᴮ проявляются вместе":"кодоминирование / группы крови"}'>
+          <div class="sort-item"><strong>гены расположены в разных парах гомологичных хромосом</strong><select><option>выбери</option><option>независимое наследование</option><option>анализирующее скрещивание</option><option>неполное доминирование</option><option>единообразие F₁</option><option>полное сцепление</option><option>неполное сцепление</option><option>сцепление с полом</option><option>летальный аллель</option><option>множественный аллелизм</option><option>кодоминирование / группы крови</option></select></div>
+          <div class="sort-item"><strong>скрестили с рецессивной дигомозиготой</strong><select><option>выбери</option><option>независимое наследование</option><option>анализирующее скрещивание</option><option>неполное доминирование</option><option>единообразие F₁</option><option>полное сцепление</option><option>неполное сцепление</option><option>сцепление с полом</option><option>летальный аллель</option><option>множественный аллелизм</option><option>кодоминирование / группы крови</option></select></div>
+          <div class="sort-item"><strong>часть потомства имеет промежуточный признак</strong><select><option>выбери</option><option>независимое наследование</option><option>анализирующее скрещивание</option><option>неполное доминирование</option><option>единообразие F₁</option><option>полное сцепление</option><option>неполное сцепление</option><option>сцепление с полом</option><option>летальный аллель</option><option>множественный аллелизм</option><option>кодоминирование / группы крови</option></select></div>
+          <div class="sort-item"><strong>все гибриды F₁ идентичны по генотипу и фенотипу</strong><select><option>выбери</option><option>независимое наследование</option><option>анализирующее скрещивание</option><option>неполное доминирование</option><option>единообразие F₁</option><option>полное сцепление</option><option>неполное сцепление</option><option>сцепление с полом</option><option>летальный аллель</option><option>множественный аллелизм</option><option>кодоминирование / группы крови</option></select></div>
+          <div class="sort-item"><strong>гены полностью сцеплены, кроссинговер не происходит</strong><select><option>выбери</option><option>независимое наследование</option><option>анализирующее скрещивание</option><option>неполное доминирование</option><option>единообразие F₁</option><option>полное сцепление</option><option>неполное сцепление</option><option>сцепление с полом</option><option>летальный аллель</option><option>множественный аллелизм</option><option>кодоминирование / группы крови</option></select></div>
+          <div class="sort-item"><strong>две многочисленные и две малочисленные фенотипические группы</strong><select><option>выбери</option><option>независимое наследование</option><option>анализирующее скрещивание</option><option>неполное доминирование</option><option>единообразие F₁</option><option>полное сцепление</option><option>неполное сцепление</option><option>сцепление с полом</option><option>летальный аллель</option><option>множественный аллелизм</option><option>кодоминирование / группы крови</option></select></div>
+          <div class="sort-item"><strong>ген находится на X-хромосоме</strong><select><option>выбери</option><option>независимое наследование</option><option>анализирующее скрещивание</option><option>неполное доминирование</option><option>единообразие F₁</option><option>полное сцепление</option><option>неполное сцепление</option><option>сцепление с полом</option><option>летальный аллель</option><option>множественный аллелизм</option><option>кодоминирование / группы крови</option></select></div>
+          <div class="sort-item"><strong>гетерогаметным является мужской пол</strong><select><option>выбери</option><option>независимое наследование</option><option>анализирующее скрещивание</option><option>неполное доминирование</option><option>единообразие F₁</option><option>полное сцепление</option><option>неполное сцепление</option><option>сцепление с полом</option><option>летальный аллель</option><option>множественный аллелизм</option><option>кодоминирование / группы крови</option></select></div>
+          <div class="sort-item"><strong>расщепление 2:1 вместо 3:1</strong><select><option>выбери</option><option>независимое наследование</option><option>анализирующее скрещивание</option><option>неполное доминирование</option><option>единообразие F₁</option><option>полное сцепление</option><option>неполное сцепление</option><option>сцепление с полом</option><option>летальный аллель</option><option>множественный аллелизм</option><option>кодоминирование / группы крови</option></select></div>
+          <div class="sort-item"><strong>у гена несколько вариантов аллелей</strong><select><option>выбери</option><option>независимое наследование</option><option>анализирующее скрещивание</option><option>неполное доминирование</option><option>единообразие F₁</option><option>полное сцепление</option><option>неполное сцепление</option><option>сцепление с полом</option><option>летальный аллель</option><option>множественный аллелизм</option><option>кодоминирование / группы крови</option></select></div>
+          <div class="sort-item"><strong>Iᴬ и Iᴮ проявляются вместе</strong><select><option>выбери</option><option>независимое наследование</option><option>анализирующее скрещивание</option><option>неполное доминирование</option><option>единообразие F₁</option><option>полное сцепление</option><option>неполное сцепление</option><option>сцепление с полом</option><option>летальный аллель</option><option>множественный аллелизм</option><option>кодоминирование / группы крови</option></select></div>
+        </div>
+        <div class="actions"><button class="primary" data-action="check-sort">Проверить</button><button class="ghost" data-action="hint" data-hint="Сначала ищи явные слова: X-хромосома, кроссинговер, рецессивная дигомозигота, промежуточный признак, 2:1. Они почти сразу указывают тип пояснения.">Подсказка</button></div><div class="feedback"></div>
+      </div>
+    </section>
+
+    <section id="algorithms" class="section">
+      <div class="panel">
+        <h2>Универсальный алгоритм пояснения</h2>
+        <p class="subtitle">Пояснение должно отвечать на вопрос задачи и описывать, какой закон, приём или явление проявляется.</p>
+        <div class="algorithm">
+          <div class="step"><span>1</span><br>Определи тип задачи по ключевым фразам и расщеплению.</div>
+          <div class="step"><span>2</span><br>Назови закон или явление: независимое наследование, сцепление, летальность и т.д.</div>
+          <div class="step"><span>3</span><br>Привяжи к условию: где гены, какие группы, какой пол, какое скрещивание.</div>
+          <div class="step"><span>4</span><br>Укажи конкретику: какие аллели сцеплены, какие группы рекомбинантные, какой ген на X.</div>
+          <div class="step"><span>5</span><br>Ответь на вопрос: вероятность, возможность рождения, причина расщепления.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Мини-шпаргалки</h2>
+        <div class="type-grid">
+          <div class="type-card green"><h3>Неполное сцепление</h3><p>Появление неравночисленных фенотипических групп связано с нарушением сцепления. Большие группы — родительские, маленькие — рекомбинантные.</p></div>
+          <div class="type-card orange"><h3>Летальный аллель</h3><p>Если вместо 3:1 получается 2:1, предполагаем, что один генотип не выживает на эмбриональной стадии.</p></div>
+          <div class="type-card purple"><h3>Сцепление с полом</h3><p>Ген на X-хромосоме. Гетерогаметный пол получает X от одного родителя, гомогаметный — от двух.</p></div>
+          <div class="type-card blue"><h3>Группы крови</h3><p>AB0 — множественный аллелизм и кодоминирование: Iᴬ и Iᴮ оба проявляются в генотипе IᴬIᴮ.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="explain" class="section">
+      <div class="task-card" data-task="ex1" data-points="1">
+        <div class="task-top"><div class="task-head"><div class="task-number">1</div><div><p class="task-title">Выбери правильное пояснение</p><p class="task-text">Ситуация: гены расположены в разных парах гомологичных хромосом.</p></div></div><div class="points">1 балл</div></div>
+        <div class="options" data-answer="Проявляется закон независимого наследования признаков, так как гены расположены в разных парах гомологичных хромосом">
+          <button class="option">Проявляется закон сцепленного наследования, так как гены расположены в разных парах хромосом</button>
+          <button class="option">Проявляется закон независимого наследования признаков, так как гены расположены в разных парах гомологичных хромосом</button>
+          <button class="option">Проявляется летальный эффект, так как гены находятся в разных хромосомах</button>
+          <button class="option">Проявляется кодоминирование, так как гены наследуются независимо</button>
+        </div>
+        <div class="actions"><button class="primary" data-action="check-single">Проверить</button></div><div class="feedback"></div>
+      </div>
+
+      <div class="task-card" data-task="ex2" data-points="1">
+        <div class="task-top"><div class="task-head"><div class="task-number">2</div><div><p class="task-title">Полное сцепление</p><p class="task-text">Выбери формулировку для задачи, где образуются две равночисленные фенотипические группы.</p></div></div><div class="points">1 балл</div></div>
+        <div class="options" data-answer="Формирование двух равночисленных групп объясняется полным сцеплением генов; кроссинговера не происходит">
+          <button class="option">Формирование двух групп объясняется независимым наследованием генов</button>
+          <button class="option">Формирование двух равночисленных групп объясняется полным сцеплением генов; кроссинговера не происходит</button>
+          <button class="option">Формирование двух групп всегда объясняется гибелью эмбрионов</button>
+          <button class="option">Формирование двух групп доказывает множественный аллелизм</button>
+        </div>
+        <div class="actions"><button class="primary" data-action="check-single">Проверить</button></div><div class="feedback"></div>
+      </div>
+
+      <div class="task-card" data-task="ex3" data-points="2">
+        <div class="task-top"><div class="task-head"><div class="task-number">3</div><div><p class="task-title">Собери пояснение про неполное сцепление</p><p class="task-text">Заполни два коротких поля.</p></div></div><div class="points">2 балла</div></div>
+        <div class="answer-grid text-grid" data-answer='{"Малочисленные группы называются":"рекомбинантные||рекомбинантными","Они образуются в результате":"кроссинговера||кроссинговер"}'>
+          <div class="answer-box"><label>Малочисленные группы называются</label><input type="text" placeholder="введи термин" /></div>
+          <div class="answer-box"><label>Они образуются в результате</label><input type="text" placeholder="введи процесс" /></div>
+        </div>
+        <div class="actions"><button class="primary" data-action="check-text">Проверить</button><button class="ghost" data-action="hint" data-hint="При неполном сцеплении маленькие группы — рекомбинантные, они возникают при слиянии кроссоверных гамет.">Подсказка</button></div><div class="feedback"></div>
+      </div>
+
+      <div class="task-card" data-task="ex4" data-points="1">
+        <div class="task-top"><div class="task-head"><div class="task-number">4</div><div><p class="task-title">Летальный аллель</p><p class="task-text">Выбери пояснение для расщепления 2:1.</p></div></div><div class="points">1 балл</div></div>
+        <div class="options" data-answer="Расщепление отличается от 3:1, потому что особи с одним из генотипов не выживают на эмбриональной стадии">
+          <button class="option">Расщепление 2:1 всегда доказывает независимое наследование</button>
+          <button class="option">Расщепление отличается от 3:1, потому что особи с одним из генотипов не выживают на эмбриональной стадии</button>
+          <button class="option">Расщепление 2:1 означает, что признак сцеплен с Y-хромосомой</button>
+          <button class="option">Расщепление 2:1 возникает только при кодоминировании</button>
+        </div>
+        <div class="actions"><button class="primary" data-action="check-single">Проверить</button></div><div class="feedback"></div>
+      </div>
+    </section>
+
+    <section id="diagnostics" class="section">
+      <div class="task-card" data-task="d1" data-points="1">
+        <div class="task-top"><div class="task-head"><div class="task-number">1</div><div><p class="task-title">Диагноз по фрагменту</p><p class="task-text">Что перед тобой?</p></div></div><div class="points">1 балл</div></div>
+        <div class="fragment">Потомство томатов, полученное от скрещивания гетерозиготных по гену A и гомозиготных по гену B с рецессивными дигомозиготными растениями, скрестили между собой.</div>
+        <div class="options" data-answer="Используется анализирующее скрещивание">
+          <button class="option">Используется анализирующее скрещивание</button>
+          <button class="option">Это задача на летальный аллель</button>
+          <button class="option">Это задача на группы крови</button>
+          <button class="option">Это псевдоаутосомное наследование</button>
+        </div>
+        <div class="actions"><button class="primary" data-action="check-single">Проверить</button></div><div class="feedback"></div>
+      </div>
+
+      <div class="task-card" data-task="d2" data-points="1">
+        <div class="task-top"><div class="task-head"><div class="task-number">2</div><div><p class="task-title">Диагноз по фрагменту</p><p class="task-text">Что объясняет результат?</p></div></div><div class="points">1 балл</div></div>
+        <div class="fragment">В потомстве получилось 320 высоких растений с шаровидными плодами, 317 карликовых растений с грушевидными плодами, 26 высоких растений с грушевидными плодами и 29 карликовых растений с шаровидными плодами.</div>
+        <div class="options" data-answer="Неполное сцепление: две большие группы родительские, две маленькие рекомбинантные">
+          <button class="option">Независимое наследование: все группы примерно равны</button>
+          <button class="option">Неполное сцепление: две большие группы родительские, две маленькие рекомбинантные</button>
+          <button class="option">Полное сцепление: кроссинговера нет</button>
+          <button class="option">Летальный аллель: расщепление 2:1</button>
+        </div>
+        <div class="actions"><button class="primary" data-action="check-single">Проверить</button></div><div class="feedback"></div>
+      </div>
+
+      <div class="task-card" data-task="d3" data-points="1">
+        <div class="task-top"><div class="task-head"><div class="task-number">3</div><div><p class="task-title">Диагноз по фрагменту</p><p class="task-text">Какой тип наследования?</p></div></div><div class="points">1 балл</div></div>
+        <div class="fragment">У дрозофилы гетерогаметным полом является мужской пол. Ген окраски тела находится на X-хромосоме.</div>
+        <div class="options" data-answer="Сцепление с полом">
+          <button class="option">Сцепление с полом</button>
+          <button class="option">Множественный аллелизм</button>
+          <button class="option">Полное сцепление аутосомных генов</button>
+          <button class="option">Кодоминирование</button>
+        </div>
+        <div class="actions"><button class="primary" data-action="check-single">Проверить</button></div><div class="feedback"></div>
+      </div>
+
+      <div class="task-card" data-task="d4" data-points="1">
+        <div class="task-top"><div class="task-head"><div class="task-number">4</div><div><p class="task-title">Диагноз по фрагменту</p><p class="task-text">На что указывает соотношение?</p></div></div><div class="points">1 балл</div></div>
+        <div class="fragment">Во втором скрещивании вместо ожидаемого расщепления 3:1 получилось расщепление 2:1.</div>
+        <div class="options" data-answer="На гибель эмбрионов с определённым генотипом">
+          <button class="option">На гибель эмбрионов с определённым генотипом</button>
+          <button class="option">На полное сцепление генов</button>
+          <button class="option">На независимое наследование</button>
+          <button class="option">На анализирующее скрещивание</button>
+        </div>
+        <div class="actions"><button class="primary" data-action="check-single">Проверить</button></div><div class="feedback"></div>
+      </div>
+
+      <div class="task-card" data-task="d5" data-points="1">
+        <div class="task-top"><div class="task-head"><div class="task-number">5</div><div><p class="task-title">Диагноз по фрагменту</p><p class="task-text">Что обязательно написать?</p></div></div><div class="points">1 балл</div></div>
+        <div class="fragment">В одной задаче приведены два скрещивания, и в них сцеплены разные аллели.</div>
+        <div class="options" data-answer="Нужно уточнить, какие аллели сцеплены в каждом скрещивании">
+          <button class="option">Нужно написать только, что был кроссинговер</button>
+          <button class="option">Нужно уточнить, какие аллели сцеплены в каждом скрещивании</button>
+          <button class="option">Нужно игнорировать первое скрещивание</button>
+          <button class="option">Нужно всегда считать группы равными</button>
+        </div>
+        <div class="actions"><button class="primary" data-action="check-single">Проверить</button></div><div class="feedback"></div>
+      </div>
+    </section>
+
+    <section id="practice" class="section">
+      <div class="task-card" data-task="p1" data-points="3">
+        <div class="task-top"><div class="task-head"><div class="task-number">1</div><div><p class="task-title">Неполное сцепление: томаты</p><p class="task-text">Отработай большие и маленькие группы.</p></div></div><div class="points">3 балла</div></div>
+        <div class="full-condition">У томатов высокий рост стебля доминирует над карликовым, а шаровидная форма плода — над грушевидной; гены высоты стебля и формы плода сцеплены. В потомстве получилось 320 высоких растений с шаровидными плодами, 317 карликовых растений с грушевидными плодами, 26 высоких растений с грушевидными плодами и 29 карликовых растений с шаровидными плодами.</div>
+        <div class="answer-grid text-grid" data-answer='{"Тип наследования":"неполное сцепление||сцепление с кроссинговером||нарушение сцепления","Рекомбинантные группы":"26 и 29||29 и 26","Почему группы не равны?":"из-за кроссинговера||кроссинговер||из-за нарушения сцепления"}'>
+          <div class="answer-box"><label>Тип наследования</label><input type="text" placeholder="введи ответ" /></div>
+          <div class="answer-box"><label>Рекомбинантные группы</label><input type="text" placeholder="укажи две численности" /></div>
+          <div class="answer-box"><label>Почему группы не равны?</label><input type="text" placeholder="введи причину" /></div>
+        </div>
+        <div class="actions"><button class="primary" data-action="check-text">Проверить</button><button class="ghost" data-action="hint" data-hint="Две большие группы: 320 и 317. Две маленькие: 26 и 29. Маленькие группы — рекомбинантные, они появляются из-за кроссинговера.">Подсказка</button></div><div class="feedback"></div>
+      </div>
+
+      <div class="task-card" data-task="p2" data-points="2">
+        <div class="task-top"><div class="task-head"><div class="task-number">2</div><div><p class="task-title">Генетическая карта</p><p class="task-text">Две рекомбинантные группы составили по 19%.</p></div></div><div class="points">2 балла</div></div>
+        <div class="full-condition">В анализирующем скрещивании гибридного потомства получилось четыре разные фенотипические группы, две из них составили по 19% от общего количества потомков. Постройте генетическую карту и укажите расстояние между генами.</div>
+        <div class="answer-grid text-grid" data-answer='{"Расстояние между генами":"38||38%","Почему?":"19+19=38||две рекомбинантные группы по 19%||рекомбинантные группы вместе 38%"}'>
+          <div class="answer-box"><label>Расстояние между генами</label><input type="text" placeholder="введи число" /></div>
+          <div class="answer-box"><label>Почему?</label><input type="text" placeholder="введи короткое объяснение" /></div>
+        </div>
+        <div class="actions"><button class="primary" data-action="check-text">Проверить</button><button class="ghost" data-action="hint" data-hint="Расстояние между генами равно сумме рекомбинантных групп: 19% + 19% = 38%.">Подсказка</button></div><div class="feedback"></div>
+      </div>
+
+      <div class="task-card" data-task="p3" data-points="2">
+        <div class="task-top"><div class="task-head"><div class="task-number">3</div><div><p class="task-title">Сцепление с полом: дрозофила</p><p class="task-text">Выбери объяснение для расщепления.</p></div></div><div class="points">2 балла</div></div>
+        <div class="fragment">У дрозофилы гетерогаметным полом является мужской пол. Во втором скрещивании расщепление по окраске тела наблюдается у самцов и самок по-разному.</div>
+        <div class="options" data-answer="Фенотипическое расщепление объясняется сцеплением гена окраски тела с X-хромосомой">
+          <button class="option">Фенотипическое расщепление объясняется сцеплением гена окраски тела с X-хромосомой</button>
+          <button class="option">Расщепление объясняется только неполным доминированием</button>
+          <button class="option">Расщепление доказывает, что ген окраски тела находится в Y-хромосоме</button>
+          <button class="option">Расщепление невозможно объяснить по условию</button>
+        </div>
+        <div class="actions"><button class="primary" data-action="check-single">Проверить</button></div><div class="feedback"></div>
+      </div>
+
+      <div class="task-card" data-task="p4" data-points="2">
+        <div class="task-top"><div class="task-head"><div class="task-number">4</div><div><p class="task-title">Множественный аллелизм и группы крови</p><p class="task-text">Выбери правильное утверждение.</p></div></div><div class="points">2 балла</div></div>
+        <div class="fragment">Ген группы крови человека имеет три аллеля: I⁰, Iᴬ и Iᴮ. Аллели Iᴬ и Iᴮ доминантны по отношению к I⁰, но в генотипе IᴬIᴮ проявляются оба.</div>
+        <div class="options" data-answer="Это множественный аллелизм и кодоминирование">
+          <button class="option">Это неполное доминирование</button>
+          <button class="option">Это множественный аллелизм и кодоминирование</button>
+          <button class="option">Это сцепление с полом</button>
+          <button class="option">Это летальный аллель</button>
+        </div>
+        <div class="actions"><button class="primary" data-action="check-single">Проверить</button></div><div class="feedback"></div>
+      </div>
+
+      <div class="task-card" data-task="p5" data-points="3">
+        <div class="task-top"><div class="task-head"><div class="task-number">5</div><div><p class="task-title">Псевдоаутосомный участок</p><p class="task-text">Распознай сложную задачу.</p></div></div><div class="points">3 балла</div></div>
+        <div class="full-condition">На X- и Y-хромосомах человека существуют псевдоаутосомные участки, которые содержат аллели одного гена, и между ними может происходить кроссинговер.</div>
+        <div class="answer-grid text-grid" data-answer='{"Где расположен ген?":"в псевдоаутосомном участке||в общем участке X и Y||в общих участках X и Y","Может ли происходить кроссинговер между X и Y?":"да||да может||возможен","Это классическое X-сцепленное наследование?":"нет||не классическое"}'>
+          <div class="answer-box"><label>Где расположен ген?</label><input type="text" placeholder="введи ответ" /></div>
+          <div class="answer-box"><label>Может ли происходить кроссинговер между X и Y?</label><input type="text" placeholder="да / нет" /></div>
+          <div class="answer-box"><label>Это классическое X-сцепленное наследование?</label><input type="text" placeholder="да / нет" /></div>
+        </div>
+        <div class="actions"><button class="primary" data-action="check-text">Проверить</button><button class="ghost" data-action="hint" data-hint="Псевдоаутосомные участки есть и на X, и на Y. Поэтому между ними возможен кроссинговер, и наследование не совпадает с обычным X-сцепленным.">Подсказка</button></div><div class="feedback"></div>
+      </div>
+
+      <div class="task-card" data-task="p6" data-points="3">
+        <div class="task-top"><div class="task-head"><div class="task-number">6</div><div><p class="task-title">X-сцепленные гены и кроссинговер</p><p class="task-text">Зачем в условии дают фенотипы родителей?</p></div></div><div class="points">3 балла</div></div>
+        <div class="full-condition">У человека между аллелями генов отсутствия потовых желёз и красно-зелёного дальтонизма происходит кроссинговер. Женщина без таких заболеваний, у отца которой отсутствовали потовые железы, а у матери был дальтонизм, вышла замуж за мужчину-дальтоника.</div>
+        <div class="answer-grid text-grid" data-answer='{"Может ли происходить кроссинговер между двумя X-хромосомами у женщины?":"да||да может||возможен","Зачем указаны фенотипы отца и матери женщины?":"чтобы понять какие X хромосомы она получила||чтобы восстановить расположение аллелей в X хромосомах||чтобы определить какие X получила женщина","Какой тип задачи?":"X-сцепленные гены с кроссинговером||сцепление с полом и кроссинговер||кроссинговер по X хромосоме"}'>
+          <div class="answer-box"><label>Может ли происходить кроссинговер между двумя X-хромосомами у женщины?</label><input type="text" placeholder="да / нет" /></div>
+          <div class="answer-box"><label>Зачем указаны фенотипы отца и матери женщины?</label><input type="text" placeholder="введи короткое объяснение" /></div>
+          <div class="answer-box"><label>Какой тип задачи?</label><input type="text" placeholder="введи ответ" /></div>
+        </div>
+        <div class="actions"><button class="primary" data-action="check-text">Проверить</button><button class="ghost" data-action="hint" data-hint="У женщины две X-хромосомы, поэтому между ними возможен кроссинговер. Фенотипы родителей помогают понять, какую X-хромосому с какими аллелями она получила от матери и от отца.">Подсказка</button></div><div class="feedback"></div>
+      </div>
+    </section>
+
+    <section id="finish" class="section">
+      <div class="finish-card">
+        <div class="big-emoji">🧬</div>
+        <h2>Итог</h2>
+        <p class="subtitle" style="margin: 0 auto 18px;">Теперь ты умеешь узнавать тип задачи, выбирать правильное пояснение, видеть ключевые фразы и связывать расщепление с законом или явлением.</p>
+        <div class="score" style="font-size: 46px;"><span id="finalScore">0</span>/<span id="finalMax">0</span></div>
+        <p class="small-muted" id="finalComment">Пройди задания, чтобы увидеть итог.</p>
+        <div class="report-card">
+          <h3>Отчёт для преподавателя</h3>
+          <p>После прохождения тренажёра можно скопировать отчёт в сообщение или скачать текстовый файл и отправить его преподавателю.</p>
+          <div class="actions">
+            <button class="primary" data-action="copy-report">Скопировать отчёт</button>
+            <button class="secondary" data-action="download-report">Скачать отчёт</button>
+          </div>
+          <div class="report-status" id="reportStatus"></div>
+        </div>
+        <div class="actions" style="justify-content:center;">
+          <button class="primary" data-section-target="markers">Повторить фразы-маркеры</button>
+          <button class="secondary" data-action="reset">Сбросить результат</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      const state = { score: 0, max: 0, results: new Map() };
+
+      function init() {
+        document.querySelectorAll('.task-card').forEach(card => {
+          state.max += Number(card.dataset.points || 0);
+        });
+        document.getElementById('maxScore').textContent = state.max;
+        document.getElementById('finalMax').textContent = state.max;
+
+        document.addEventListener('click', (event) => {
+          const btn = event.target.closest('button');
+          if (!btn) return;
+          if (btn.dataset.sectionTarget) showSection(btn.dataset.sectionTarget);
+          if (btn.dataset.action === 'reset') resetAll();
+          if (btn.dataset.action === 'check-single') checkSingle(btn);
+          if (btn.dataset.action === 'check-sort') checkSort(btn);
+          if (btn.dataset.action === 'check-text') checkTextGrid(btn);
+          if (btn.dataset.action === 'hint') showHint(btn, btn.dataset.hint || '');
+          if (btn.dataset.action === 'copy-report') copyReport();
+          if (btn.dataset.action === 'download-report') downloadReport();
+        });
+
+        document.querySelectorAll('.options').forEach(group => {
+          group.addEventListener('click', (event) => {
+            const opt = event.target.closest('.option');
+            if (!opt) return;
+            group.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+          });
+        });
+
+        console.assert(document.querySelectorAll('.task-card').length >= 15, 'Должно быть много заданий');
+        console.assert(document.querySelectorAll('[data-section-target]').length >= 7, 'Должны быть кнопки навигации');
+        updateScore();
+      }
+
+      function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        const section = document.getElementById(id);
+        if (section) section.classList.add('active');
+        document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.sectionTarget === id));
+        if (id === 'finish') updateFinal();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function getTask(button) { return button.closest('.task-card'); }
+      function getFeedback(card) { return card.querySelector('.feedback'); }
+
+      function markTask(card, isCorrect, message) {
+        const feedback = getFeedback(card);
+        feedback.className = 'feedback show ' + (isCorrect ? 'good' : 'bad');
+        feedback.innerHTML = message;
+        updateScore();
+      }
+
+      function recordTaskResult(card, isCorrect, responses) {
+        const taskId = card.dataset.task;
+        const title = card.querySelector('.task-title')?.textContent.trim() || taskId;
+        const section = card.closest('.section')?.id || '';
+        const points = Number(card.dataset.points || 0);
+        state.results.set(taskId, {
+          taskId,
+          title,
+          section,
+          isCorrect,
+          points,
+          earned: isCorrect ? points : 0,
+          checkedAt: new Date().toLocaleString('ru-RU'),
+          responses
+        });
+      }
+
+      function recalculateScore() {
+        let total = 0;
+        state.results.forEach(result => {
+          if (result.isCorrect) total += result.points;
+        });
+        state.score = total;
+      }
+
+      function updateScore() {
+        recalculateScore();
+        document.getElementById('score').textContent = state.score;
+        document.getElementById('maxScore').textContent = state.max;
+        const percent = state.max ? Math.round((state.score / state.max) * 100) : 0;
+        document.getElementById('progressBar').style.width = percent + '%';
+        document.getElementById('progressText').textContent = state.results.size
+          ? `Проверено заданий: ${state.results.size}. Прогресс: ${percent}%.`
+          : 'Пока ничего не проверено.';
+        updateFinal();
+      }
+
+      function updateFinal() {
+        document.getElementById('finalScore').textContent = state.score;
+        document.getElementById('finalMax').textContent = state.max;
+        const pct = state.max ? state.score / state.max : 0;
+        const comment = document.getElementById('finalComment');
+        if (state.results.size === 0) comment.textContent = 'Пройди задания, чтобы увидеть итог.';
+        else if (pct >= 0.85) comment.textContent = 'Отлично: можно переходить к полным задачам 28 линии.';
+        else if (pct >= 0.55) comment.textContent = 'Неплохо, но стоит повторить фразы-маркеры и пояснения.';
+        else comment.textContent = 'Пока лучше закрепить карту типов задач и базовые алгоритмы.';
+      }
+
+      function checkSingle(button) {
+        const card = getTask(button);
+        const group = card.querySelector('.options');
+        const selected = group.querySelector('.option.selected');
+        const answer = group.dataset.answer;
+        if (!selected) { showNeutral(card, 'Сначала выбери один вариант ответа.'); return; }
+        const ok = selected.textContent.trim() === answer;
+        group.querySelectorAll('.option').forEach(o => {
+          o.classList.remove('correct', 'wrong');
+          if (o.textContent.trim() === answer) o.classList.add('correct');
+        });
+        if (!ok) selected.classList.add('wrong');
+        recordTaskResult(card, ok, [{
+          prompt: 'Выбранный вариант',
+          studentAnswer: selected.textContent.trim(),
+          correctAnswer: answer
+        }]);
+        markTask(card, ok, ok ? 'Верно.' : `Почти. Правильный ответ: <strong>${answer}</strong>.`);
+      }
+
+      function checkSort(button) {
+        const card = getTask(button);
+        const grid = card.querySelector('.sort-grid');
+        const answer = JSON.parse(grid.dataset.answer);
+        let ok = true;
+        let details = [];
+
+        const responses = [];
+        grid.querySelectorAll('.sort-item').forEach(item => {
+          const phrase = item.querySelector('strong').textContent.trim();
+          const select = item.querySelector('select');
+          const value = select.value;
+          select.style.borderColor = '';
+          select.style.background = '';
+          if (value !== answer[phrase]) {
+            ok = false;
+            select.style.borderColor = 'var(--red)';
+            select.style.background = 'var(--red-soft)';
+          } else {
+            select.style.borderColor = 'var(--green)';
+            select.style.background = 'var(--green-soft)';
+          }
+          details.push(`${phrase} — ${answer[phrase]}`);
+          responses.push({
+            prompt: phrase,
+            studentAnswer: value,
+            correctAnswer: answer[phrase]
+          });
+        });
+
+        recordTaskResult(card, ok, responses);
+        markTask(card, ok ? true : false, ok ? 'Верно.' : `Проверь распределение. Правильно так: <strong>${details.join('; ')}</strong>.`);
+      }
+
+      function normalizeText(value) {
+        return (value || '')
+          .toString()
+          .trim()
+          .toLowerCase()
+          .replace(/ё/g, 'е')
+          .replace(/[–—]/g, '-')
+          .replace(/,/g, '.')
+          .replace(/\s+/g, '');
+      }
+
+      function checkTextGrid(button) {
+        const card = getTask(button);
+        const grid = card.querySelector('.text-grid');
+        const answer = JSON.parse(grid.dataset.answer);
+        let ok = true;
+        let details = [];
+
+        const responses = [];
+        grid.querySelectorAll('.answer-box').forEach(box => {
+          const label = box.querySelector('label').textContent.trim();
+          const input = box.querySelector('input');
+          const rawExpected = answer[label];
+          const variants = rawExpected.toString().split('||').map(normalizeText);
+          const rawValue = input.value.trim();
+          const value = normalizeText(rawValue);
+          input.style.borderColor = '';
+          input.style.background = '';
+
+          if (!variants.includes(value)) {
+            ok = false;
+            input.style.borderColor = 'var(--red)';
+            input.style.background = 'var(--red-soft)';
+          } else {
+            input.style.borderColor = 'var(--green)';
+            input.style.background = 'var(--green-soft)';
+          }
+          details.push(`${label}: ${rawExpected.toString().split('||')[0]}`);
+          responses.push({
+            prompt: label,
+            studentAnswer: rawValue || '—',
+            correctAnswer: rawExpected.toString().split('||')[0]
+          });
+        });
+
+        recordTaskResult(card, ok, responses);
+        markTask(card, ok, ok ? 'Верно.' : `Нужно поправить. Проверь ответы: <strong>${details.join('; ')}</strong>.`);
+      }
+
+      function showHint(button, text) {
+        const card = getTask(button);
+        showNeutral(card, 'Подсказка: ' + text);
+      }
+
+      function showNeutral(card, text) {
+        const feedback = getFeedback(card);
+        feedback.className = 'feedback show neutral';
+        feedback.textContent = text;
+      }
+
+
+      function getStudentName() {
+        return (document.getElementById('studentName')?.value || '').trim() || 'без имени';
+      }
+
+      function getSectionTitle(sectionId) {
+        const tab = document.querySelector(`.tab[data-section-target="${sectionId}"]`);
+        return tab ? tab.textContent.trim() : sectionId;
+      }
+
+      function collectCurrentResponses(card) {
+        const rows = [];
+        const selected = card.querySelector('.option.selected');
+        if (selected) {
+          const correct = card.querySelector('.options')?.dataset.answer || '';
+          rows.push({
+            prompt: 'Выбранный вариант',
+            studentAnswer: selected.textContent.trim(),
+            correctAnswer: correct
+          });
+        }
+
+        card.querySelectorAll('.sort-item').forEach(item => {
+          const prompt = item.querySelector('strong')?.textContent.trim() || '';
+          const select = item.querySelector('select');
+          if (prompt && select && select.value !== 'выбери') {
+            rows.push({
+              prompt,
+              studentAnswer: select.value,
+              correctAnswer: 'не проверено'
+            });
+          }
+        });
+
+        card.querySelectorAll('.answer-box').forEach(box => {
+          const prompt = box.querySelector('label')?.textContent.trim() || '';
+          const input = box.querySelector('input');
+          if (prompt && input && input.value.trim()) {
+            rows.push({
+              prompt,
+              studentAnswer: input.value.trim(),
+              correctAnswer: 'не проверено'
+            });
+          }
+        });
+
+        return rows;
+      }
+
+      function buildReport() {
+        recalculateScore();
+        const name = getStudentName();
+        const now = new Date().toLocaleString('ru-RU');
+        const percent = state.max ? Math.round((state.score / state.max) * 100) : 0;
+        const checked = state.results.size;
+        const correct = Array.from(state.results.values()).filter(r => r.isCorrect).length;
+        const incorrect = Array.from(state.results.values()).filter(r => !r.isCorrect).length;
+
+        const lines = [];
+        lines.push('ОТЧЁТ ПО ТРЕНАЖЁРУ');
+        lines.push('Большой тренажёр: генетические задачи 28 линии');
+        lines.push('');
+        lines.push(`Имя ученика: ${name}`);
+        lines.push(`Дата и время: ${now}`);
+        lines.push(`Итоговый балл: ${state.score}/${state.max} (${percent}%)`);
+        lines.push(`Проверено заданий: ${checked}`);
+        lines.push(`Верно: ${correct}`);
+        lines.push(`С ошибками: ${incorrect}`);
+        lines.push('');
+        lines.push('РЕЗУЛЬТАТЫ ПО ЗАДАНИЯМ');
+
+        document.querySelectorAll('.task-card').forEach((card, index) => {
+          const taskId = card.dataset.task;
+          const title = card.querySelector('.task-title')?.textContent.trim() || taskId;
+          const section = getSectionTitle(card.closest('.section')?.id || '');
+          const points = Number(card.dataset.points || 0);
+          const result = state.results.get(taskId);
+          const status = result ? (result.isCorrect ? 'ВЕРНО' : 'ОШИБКА') : 'НЕ ПРОВЕРЕНО';
+          const earned = result ? result.earned : 0;
+          const responses = result ? result.responses : collectCurrentResponses(card);
+
+          lines.push('');
+          lines.push(`${index + 1}. ${title}`);
+          lines.push(`Раздел: ${section}`);
+          lines.push(`Статус: ${status}`);
+          lines.push(`Баллы: ${earned}/${points}`);
+          if (result?.checkedAt) lines.push(`Проверено: ${result.checkedAt}`);
+
+          if (responses.length) {
+            lines.push('Ответы:');
+            responses.forEach(row => {
+              lines.push(`- ${row.prompt}`);
+              lines.push(`  Ответ ученика: ${row.studentAnswer || '—'}`);
+              lines.push(`  Правильный ответ: ${row.correctAnswer || '—'}`);
+            });
+          } else {
+            lines.push('Ответы: не введены / не выбраны');
+          }
+        });
+
+        return lines.join('\n');
+      }
+
+      async function copyReport() {
+        const report = buildReport();
+        const status = document.getElementById('reportStatus');
+        try {
+          await navigator.clipboard.writeText(report);
+          if (status) status.textContent = 'Отчёт скопирован. Теперь его можно вставить в сообщение.';
+        } catch (error) {
+          const textarea = document.createElement('textarea');
+          textarea.value = report;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          textarea.remove();
+          if (status) status.textContent = 'Отчёт скопирован. Теперь его можно вставить в сообщение.';
+        }
+      }
+
+      function sanitizeFileName(value) {
+        return value
+          .replace(/[\\/:*?"<>|]+/g, '_')
+          .replace(/\s+/g, '_')
+          .slice(0, 60) || 'student';
+      }
+
+      function downloadReport() {
+        const report = buildReport();
+        const name = sanitizeFileName(getStudentName());
+        const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+        const blob = new Blob([report], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `report_${name}_${stamp}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+
+        const status = document.getElementById('reportStatus');
+        if (status) status.textContent = 'Отчёт скачан файлом. Его можно отправить преподавателю.';
+      }
+
+      function resetAll() {
+        state.score = 0;
+        state.results = new Map();
+        document.querySelectorAll('.option').forEach(o => o.classList.remove('selected', 'correct', 'wrong'));
+        document.querySelectorAll('input').forEach(i => { i.value = ''; i.style.borderColor = ''; i.style.background = ''; });
+        document.querySelectorAll('select').forEach(s => { s.selectedIndex = 0; s.style.borderColor = ''; s.style.background = ''; });
+        document.querySelectorAll('.feedback').forEach(f => { f.className = 'feedback'; f.textContent = ''; });
+        updateScore();
+        showSection('map');
+      }
+
+      document.addEventListener('DOMContentLoaded', init);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тренажёр: менделевские законы</title>
+<style>
+:root { --bg:#fff8ea; --ink:#2b2a22; --muted:#706b5d; --pea:#4f8f3a; --pea-dark:#2f6425; --pea-soft:#e7f3df; --violet:#7b5bbd; --violet-soft:#eee8ff; --yellow:#e5a93f; --yellow-soft:#fff0cb; --red:#b94545; --red-soft:#ffe4e1; --line:#eadfc8; --shadow:0 14px 34px rgba(70,50,20,.12); }
+*{box-sizing:border-box} body{margin:0;min-height:100vh;font-family:Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at top left,rgba(79,143,58,.16),transparent 34%),radial-gradient(circle at top right,rgba(123,91,189,.13),transparent 34%),var(--bg)} .app{max-width:1220px;margin:0 auto;padding:28px 18px 48px}
+header{display:grid;grid-template-columns:1.25fr .75fr;gap:18px;margin-bottom:18px} .hero,.score-card,.panel,.task-card,.finish-card{background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow)} .hero{padding:30px;position:relative;overflow:hidden} .hero:after{content:"Aa × Aa";position:absolute;right:20px;bottom:-22px;font-size:78px;font-weight:900;color:rgba(79,143,58,.08)}
+h1{margin:0 0 12px;font-size:clamp(30px,4.2vw,52px);line-height:1.03;letter-spacing:-1.5px} h2{margin:0 0 14px;font-size:29px;letter-spacing:-.7px} h3{margin:0 0 10px} .subtitle{margin:0;max-width:860px;font-size:18px;line-height:1.5;color:var(--muted)} .badge-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px} .badge{border-radius:999px;padding:8px 12px;background:var(--pea-soft);color:var(--pea-dark);font-weight:850;font-size:13px;border:1px solid #c8dfbd}
+.student-box{margin-top:20px;padding:16px;border-radius:18px;background:var(--pea-soft);border:1px solid #c8dfbd;max-width:560px} label{font-weight:900;color:var(--pea-dark);display:block;margin-bottom:8px} input,select{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:12px;font-size:16px;font-weight:760;background:#fff;color:var(--ink)} .score-card{padding:22px;display:flex;flex-direction:column;justify-content:space-between;min-height:225px} .score-label{color:var(--muted);font-size:14px;font-weight:850;text-transform:uppercase;letter-spacing:.08em} .score{margin:8px 0 4px;color:var(--pea-dark);font-size:54px;font-weight:900} .progress-wrap{height:12px;background:#f0e7d5;border-radius:999px;overflow:hidden;margin:14px 0 8px} .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--pea),var(--violet));border-radius:999px;transition:width .35s} .small-muted{color:var(--muted);font-size:14px;line-height:1.45}
+nav{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0;position:sticky;top:0;z-index:20;padding:10px 0;background:rgba(255,248,234,.9);backdrop-filter:blur(10px)} button{font:inherit;border:0;cursor:pointer} .tab{border-radius:999px;padding:11px 15px;background:#fff;border:1px solid var(--line);color:var(--muted);font-weight:850;transition:.18s} .tab.active{background:var(--pea-dark);color:#fff;border-color:transparent;box-shadow:0 8px 18px rgba(47,100,37,.2)} .section{display:none} .section.active{display:block} .panel,.task-card{padding:22px;margin-bottom:18px}
+.law-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px} .law,.type-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;line-height:1.45} .law strong{display:block;color:var(--pea-dark);font-size:18px;margin-bottom:8px} .type-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:16px} .type-card.green{background:var(--pea-soft)} .type-card.violet{background:var(--violet-soft)} .type-card.yellow{background:var(--yellow-soft)} .type-card p{color:var(--muted)}
+.task-top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:14px} .task-head{display:flex;gap:12px;align-items:flex-start} .task-number{display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:38px;border-radius:12px;background:var(--pea-soft);color:var(--pea-dark);font-weight:900;flex:0 0 auto} .task-title{font-size:22px;font-weight:900;margin:0 0 5px;letter-spacing:-.4px} .task-text{color:var(--muted);margin:0;line-height:1.45} .points{background:var(--yellow-soft);color:#866017;border:1px solid #efd399;border-radius:999px;padding:8px 12px;font-weight:900;font-size:13px;white-space:nowrap}
+.option,.sort-item,.answer-box,.full-condition{background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px 14px} .options,.sort-grid,.answer-grid{display:grid;gap:10px;margin-top:14px} .answer-grid.two{grid-template-columns:repeat(2,1fr)} .option{text-align:left;font-weight:760;line-height:1.35} .option:hover{transform:translateY(-1px);border-color:#b6cfab} .option.selected,.option.correct{background:var(--pea-soft);border-color:var(--pea);color:var(--pea-dark)} .option.wrong{background:var(--red-soft);border-color:var(--red);color:#7e2828} .sort-item{display:flex;align-items:center;justify-content:space-between;gap:12px} .sort-item strong{line-height:1.35} .sort-item select{width:auto;min-width:290px} .full-condition{margin-top:14px;background:#fffaf0;font-size:17px;line-height:1.5;font-weight:740}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;align-items:center} .primary,.secondary,.ghost{border-radius:14px;padding:12px 15px;font-weight:900;transition:.18s} .primary{background:var(--pea-dark);color:#fff;box-shadow:0 8px 18px rgba(47,100,37,.2)} .secondary{background:var(--violet-soft);color:var(--violet);border:1px solid #cec1ee} .ghost{background:#fff;color:var(--muted);border:1px solid var(--line)} .primary:hover,.secondary:hover,.ghost:hover{transform:translateY(-1px)} .feedback{display:none;margin-top:14px;border-radius:16px;padding:14px;line-height:1.5;font-weight:680} .feedback.show{display:block} .feedback.good{background:var(--pea-soft);border:1px solid #c8dfbd;color:var(--pea-dark)} .feedback.bad{background:var(--red-soft);border:1px solid #e7b7b7;color:#7e2828} .feedback.neutral{background:var(--yellow-soft);border:1px solid #efd399;color:#775816} .report-card{max-width:820px;margin:22px auto 0;padding:18px;border-radius:20px;background:#fffaf0;border:1px solid var(--line);text-align:left} .report-card h3{color:var(--pea-dark)} .finish-card{padding:30px;text-align:center} .big-emoji{font-size:64px;margin-bottom:8px}
+@media(max-width:980px){header,.law-strip,.type-grid,.answer-grid.two{grid-template-columns:1fr} .task-top,.sort-item{flex-direction:column;align-items:stretch} .sort-item select{width:100%;min-width:0} nav{position:static}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="hero">
+    <h1>Тренажёр:<br>менделевские законы</h1>
+    <p class="subtitle">Расширенная версия: термины, законы Менделя, схемы скрещивания, вероятности, неполное доминирование, летальные генотипы, множественный аллелизм и задачи 28 линии.</p>
+    <div class="badge-row"><span class="badge">🌱 термины</span><span class="badge">P / G / F</span><span class="badge">3:1 и 9:3:3:1</span><span class="badge">летальность</span><span class="badge">ЕГЭ-28</span></div>
+    <div class="student-box"><label for="studentName">Введи имя</label><input id="studentName" type="text" placeholder="например: Маша" autocomplete="name"></div>
+  </div>
+  <div class="score-card"><div><div class="score-label">Текущий результат</div><div class="score"><span id="score">0</span>/<span id="maxScore">0</span></div><div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div><div class="small-muted" id="progressText">Пока ничего не проверено.</div></div><button class="secondary" data-action="reset">Начать заново</button></div>
+</header>
+<nav>
+  <button class="tab active" data-section-target="map">1. Карта</button>
+  <button class="tab" data-section-target="terms">2. Термины</button><button class="tab" data-section-target="markers">3. Фразы-маркеры</button><button class="tab" data-section-target="schemes">4. Схемы и гаметы</button><button class="tab" data-section-target="ratios">5. Расщепления</button><button class="tab" data-section-target="special">6. Ловушки</button><button class="tab" data-section-target="explain">7. Пояснения</button><button class="tab" data-section-target="practice">8. Задачи 28 линии</button>
+  <button class="tab" data-section-target="finish">Итог</button>
+</nav>
+
+<section id="map" class="section active">
+<div class="panel">
+  <h2>Карта менделевских задач</h2>
+  <p class="subtitle">В задачах этой группы важно быстро отличать базовые законы от ловушек: неполного доминирования, летальных генотипов и множественного аллелизма.</p>
+  <div class="law-strip">
+    <div class="law"><strong>I закон: единообразие F₁</strong>AA × aa → все Aa. Гибриды первого поколения одинаковы.</div>
+    <div class="law"><strong>II закон: расщепление</strong>Aa × Aa → генотипы 1:2:1, фенотипы 3:1 при полном доминировании.</div>
+    <div class="law"><strong>III закон: независимое наследование</strong>AaBb × AaBb → 9:3:3:1, если гены находятся в разных парах хромосом.</div>
+  </div>
+  <div class="type-grid">
+    <div class="type-card green"><h3>Анализирующее</h3><p>Скрещивание с aa или aabb. Нужно определить генотип особи с доминантным фенотипом.</p></div>
+    <div class="type-card violet"><h3>Неполное доминирование</h3><p>Гетерозигота имеет промежуточный признак, фенотипы часто 1:2:1.</p></div>
+    <div class="type-card yellow"><h3>Летальность</h3><p>Если один генотип погибает, ожидаемое расщепление искажается: например, 2:1 вместо 3:1.</p></div>
+    <div class="type-card green"><h3>Множественные аллели</h3><p>У одного гена больше двух вариантов аллелей. Нужно аккуратно записывать возможные генотипы.</p></div>
+  </div>
+</div>
+</section>
+
+<section id="terms" class="section"><div class="panel"><h2>2. Термины</h2><p class="subtitle">Реши задания блока и проверь себя.</p></div><div class="tasks" data-section="terms"></div></section><section id="markers" class="section"><div class="panel"><h2>3. Фразы-маркеры</h2><p class="subtitle">Реши задания блока и проверь себя.</p></div><div class="tasks" data-section="markers"></div></section><section id="schemes" class="section"><div class="panel"><h2>4. Схемы и гаметы</h2><p class="subtitle">Реши задания блока и проверь себя.</p></div><div class="tasks" data-section="schemes"></div></section><section id="ratios" class="section"><div class="panel"><h2>5. Расщепления</h2><p class="subtitle">Реши задания блока и проверь себя.</p></div><div class="tasks" data-section="ratios"></div></section><section id="special" class="section"><div class="panel"><h2>6. Ловушки</h2><p class="subtitle">Реши задания блока и проверь себя.</p></div><div class="tasks" data-section="special"></div></section><section id="explain" class="section"><div class="panel"><h2>7. Пояснения</h2><p class="subtitle">Реши задания блока и проверь себя.</p></div><div class="tasks" data-section="explain"></div></section><section id="practice" class="section"><div class="panel"><h2>8. Задачи 28 линии</h2><p class="subtitle">Реши задания блока и проверь себя.</p></div><div class="tasks" data-section="practice"></div></section>
+
+<section id="finish" class="section">
+<div class="finish-card">
+  <div class="big-emoji">🌱</div>
+  <h2>Итог тренировки</h2>
+  <p class="subtitle" style="margin:0 auto 18px;">Теперь ты умеешь узнавать менделевские задачи, выбирать закон, записывать гаметы, считать вероятности и формулировать пояснения.</p>
+  <div class="score" style="font-size:46px;"><span id="finalScore">0</span>/<span id="finalMax">0</span></div>
+  <p class="small-muted" id="finalComment">Пройди задания, чтобы увидеть итог.</p>
+  <div class="report-card"><h3>Отчёт для преподавателя</h3><p class="small-muted">После прохождения тренажёра можно скопировать отчёт в сообщение или скачать текстовый файл.</p><div class="actions"><button class="primary" data-action="copy-report">Скопировать отчёт</button><button class="secondary" data-action="download-report">Скачать отчёт</button></div><div class="small-muted" id="reportStatus"></div></div>
+  <div class="actions" style="justify-content:center;"><button class="primary" data-section-target="markers">Повторить маркеры</button><button class="secondary" data-action="reset">Сбросить результат</button></div>
+</div>
+</section>
+</div>
+
+<script>
+const TASKS = [{"section": "terms", "points": 4, "kind": "sort", "title": "Базовые термины", "text": "Сопоставь термин и смысл.", "answers": {"гомологичные хромосомы": "одинаковые по форме и набору генов, одна от матери, другая от отца", "аллели": "разные формы одного гена", "гомозигота": "одинаковые аллели одного гена: AA или aa", "гетерозигота": "разные аллели одного гена: Aa", "дигомозигота": "одинаковые аллели по двум генам: AABB, AAbb, aaBB или aabb", "дигетерозигота": "разные аллели по двум генам: AaBb", "фенотип": "внешнее проявление признака", "анализирующее скрещивание": "скрещивание с рецессивной гомозиготой или дигомозиготой"}, "options": ["одинаковые по форме и набору генов, одна от матери, другая от отца", "разные формы одного гена", "одинаковые аллели одного гена: AA или aa", "разные аллели одного гена: Aa", "одинаковые аллели по двум генам: AABB, AAbb, aaBB или aabb", "разные аллели по двум генам: AaBb", "внешнее проявление признака", "скрещивание с рецессивной гомозиготой или дигомозиготой"], "hint": "Сначала отдели генотип от фенотипа. Гомо- = одинаковые аллели, гетеро- = разные."}, {"section": "terms", "points": 2, "kind": "single", "title": "Доминантный фенотип", "text": "У кроликов чёрная окраска доминирует над белой. Сколько генотипов может иметь чёрный кролик?", "answer": "2", "options": ["1", "2", "3", "4"], "hint": "Доминантный фенотип может быть у AA и Aa."}, {"section": "terms", "points": 2, "kind": "single", "title": "Рецессивный фенотип", "text": "Свободная мочка уха — доминантный признак. Сколько генотипов может иметь человек с приросшей мочкой уха?", "answer": "1", "options": ["1", "2", "3", "4"], "hint": "Рецессивный фенотип проявляется только у aa."}, {"section": "terms", "points": 2, "kind": "single", "title": "Гамета и гомологичные хромосомы", "text": "В яйцеклетке человека 23 хромосомы. Сколько среди них гомологичных?", "answer": "0", "options": ["0", "1", "23", "46"], "hint": "В гамете гаплоидный набор: каждая хромосома представлена без пары."}, {"section": "terms", "points": 2, "kind": "single", "title": "Обозначения в схеме", "text": "Что означает буква G в схеме скрещивания?", "answer": "гаметы", "options": ["родители", "гаметы", "потомки первого поколения", "фенотипы"], "hint": "P — родители, G — гаметы, F — потомство."}, {"section": "markers", "points": 5, "kind": "sort", "title": "Фразы-маркеры", "text": "Распредели фразы по типу задачи.", "answers": {"все гибриды F₁ одинаковы": "I закон Менделя", "скрещивание чистых линий": "I закон Менделя", "расщепление по фенотипу 3:1": "II закон Менделя", "расщепление по генотипу 1:2:1": "II закон Менделя", "гены расположены в разных парах гомологичных хромосом": "III закон Менделя", "расщепление 9:3:3:1": "III закон Менделя", "скрещивание с рецессивной гомозиготой": "анализирующее скрещивание", "скрещивание с рецессивной дигомозиготой": "анализирующее скрещивание", "промежуточный фенотип у гетерозиготы": "неполное доминирование", "расщепление 2:1 вместо 3:1": "летальный генотип"}, "options": ["I закон Менделя", "II закон Менделя", "III закон Менделя", "анализирующее скрещивание", "неполное доминирование", "летальный генотип"], "hint": "2:1 — думай про гибель одного генотипа. Промежуточный признак — неполное доминирование."}, {"section": "markers", "points": 2, "kind": "text", "title": "Гибридологический метод", "text": "Запиши правильную последовательность действий: 1) скрещивание альтернативных форм; 2) получение F₁; 3) отбор чистых линий; 4) учёт расщепления; 5) скрещивание гибридов F₁.", "answers": {"Последовательность": ["31254"]}, "hint": "Сначала чистые линии, потом скрещивание родителей, F₁, скрещивание F₁, подсчёт результатов."}, {"section": "markers", "points": 2, "kind": "text", "title": "Условия I закона", "text": "Выбери номера условий выполнения первого закона Менделя: 1) один сорт гамет у каждого родителя; 2) гаплоидные организмы; 3) гомозиготность родителей; 4) летальность; 5) множественный аллелизм; 6) равная вероятность участия гамет.", "answers": {"Номера": ["136", "1 3 6", "1,3,6"]}, "hint": "Для единообразия нужны чистые линии и равная вероятность оплодотворения."}, {"section": "schemes", "points": 3, "kind": "text", "title": "Гаметы", "text": "Запиши гаметы для каждого генотипа.", "answers": {"Aa": ["A, a", "A a", "A,a"], "AaBb": ["AB, Ab, aB, ab", "AB Ab aB ab", "AB,Ab,aB,ab"], "AAbb": ["Ab"]}, "hint": "В гамете по одному аллелю каждого гена. Число сортов гамет = 2ⁿ, где n — число гетерозиготных генов."}, {"section": "schemes", "points": 3, "kind": "sort", "title": "Скрещивание и результат", "text": "Сопоставь схему и ожидаемое расщепление.", "answers": {"AA × aa": "все Aa, доминантный фенотип", "Aa × Aa": "1AA : 2Aa : 1aa; фенотипы 3:1", "Aa × aa": "1Aa : 1aa; фенотипы 1:1", "AaBb × aabb": "1:1:1:1 при независимом наследовании", "AaBb × AaBb": "9:3:3:1 при независимом наследовании", "AAbb × aaBB": "все AaBb"}, "options": ["все Aa, доминантный фенотип", "1AA : 2Aa : 1aa; фенотипы 3:1", "1Aa : 1aa; фенотипы 1:1", "1:1:1:1 при независимом наследовании", "9:3:3:1 при независимом наследовании", "все AaBb"], "hint": "AAbb × aaBB — это две чистые линии по двум признакам, всё F₁ будет AaBb."}, {"section": "schemes", "points": 2, "kind": "text", "title": "Количество сортов гамет", "text": "Запиши только числа.", "answers": {"У AaBb": ["4"], "У AABBCC": ["1"], "У AaBBCc": ["4"]}, "hint": "Считай только гетерозиготные пары: 2ⁿ."}, {"section": "ratios", "points": 3, "kind": "text", "title": "Aa × Aa", "text": "A — доминантный признак. Найди вероятности.", "answers": {"Вероятность AA": ["25", "25%", "1/4"], "Вероятность Aa": ["50", "50%", "1/2"], "Вероятность доминантного фенотипа": ["75", "75%", "3/4"]}, "hint": "Aa × Aa даёт генотипы 1AA : 2Aa : 1aa."}, {"section": "ratios", "points": 3, "kind": "text", "title": "AaBb × AaBb", "text": "Гены наследуются независимо. Найди вероятности.", "answers": {"A-B-": ["9/16", "56.25", "56,25", "56.25%", "56,25%"], "aabb": ["1/16", "6.25", "6,25", "6.25%", "6,25%"], "aaB-": ["3/16", "18.75", "18,75", "18.75%", "18,75%"]}, "hint": "Для дигетерозигот при независимом наследовании фенотипы 9:3:3:1."}, {"section": "ratios", "points": 2, "kind": "single", "title": "Правило умножения", "text": "AaBb × AaBb. Какова вероятность aa и bb одновременно?", "answer": "1/4 × 1/4 = 1/16", "options": ["1/2 × 1/2 = 1/4", "1/4 × 1/4 = 1/16", "3/4 × 3/4 = 9/16", "1/4 + 1/4 = 1/2"], "hint": "Для независимых событий вероятности перемножаются."}, {"section": "ratios", "points": 2, "kind": "text", "title": "Здоровые родители — больной ребёнок", "text": "Рецессивная болезнь. У здоровых родителей родился больной ребёнок. Какова вероятность рождения здорового ребёнка?", "answers": {"Вероятность, %": ["75", "75%"]}, "hint": "Родители должны быть Aa × Aa. Здоровые дети — AA и Aa, всего 3/4."}, {"section": "special", "points": 3, "kind": "sort", "title": "Ловушки менделевских задач", "text": "Сопоставь ситуацию и вывод.", "answers": {"у гетерозиготы промежуточный фенотип": "неполное доминирование", "фенотипическое расщепление совпадает с генотипическим 1:2:1": "неполное доминирование", "доминантная гомозигота погибает": "летальный генотип", "вместо 3:1 получилось 2:1": "летальный генотип", "у гена больше двух аллелей": "множественный аллелизм", "Iᴬ и Iᴮ проявляются вместе": "кодоминирование"}, "options": ["неполное доминирование", "летальный генотип", "множественный аллелизм", "кодоминирование"], "hint": "Неполное доминирование — промежуточный фенотип. Летальность — искажённое расщепление."}, {"section": "special", "points": 2, "kind": "text", "title": "Неполное доминирование", "text": "У шортгорнских коров красная масть AA, белая aa, пёстрая Aa. Скрестили пёструю корову с красным быком. Какой процент белых телят?", "answers": {"Белые телята, %": ["0", "0%"]}, "hint": "Aa × AA даёт AA и Aa. Генотипа aa не будет."}, {"section": "special", "points": 2, "kind": "text", "title": "Летальный генотип", "text": "У норок AA — гибель, Aa — серебристые, aa — коричневые. Скрестили Aa × Aa. Запиши фенотипическое соотношение среди живых потомков.", "answers": {"Соотношение": ["2:1", "21", "2 к 1"]}, "hint": "AA погибают. Среди живых остаются 2 Aa и 1 aa."}, {"section": "special", "points": 2, "kind": "single", "title": "Множественный аллелизм", "text": "У кошек окраска контролируется серией аллелей: C, cˢ, c. Какой тип наследования здесь надо распознать?", "answer": "множественный аллелизм", "options": ["неполное доминирование", "множественный аллелизм", "сцепление с полом", "летальный генотип"], "hint": "Если у одного гена больше двух вариантов аллелей, это множественный аллелизм."}, {"section": "explain", "points": 1, "kind": "single", "title": "I закон Менделя", "text": "Выбери правильное пояснение.", "answer": "В скрещивании наблюдается закон единообразия гибридов первого поколения, так как все гибриды идентичны по генотипу и фенотипу", "options": ["В скрещивании наблюдается закон единообразия гибридов первого поколения, так как все гибриды идентичны по генотипу и фенотипу", "В скрещивании наблюдается летальность, так как все гибриды одинаковые", "Это анализирующее скрещивание, потому что родители чистые линии", "Это сцепление генов, потому что потомство единообразно"], "hint": "Единообразие F₁ — все гибриды одинаковы."}, {"section": "explain", "points": 1, "kind": "single", "title": "III закон Менделя", "text": "Выбери пояснение для независимого наследования.", "answer": "Признаки наследуются независимо, так как гены расположены в разных парах гомологичных хромосом", "options": ["Признаки наследуются независимо, так как гены находятся в одной хромосоме", "Признаки наследуются независимо, так как гены расположены в разных парах гомологичных хромосом", "Признаки наследуются независимо, потому что один ген находится в X-хромосоме", "Независимое наследование проявляется только при летальном аллеле"], "hint": "Ключевая фраза: гены расположены в разных парах гомологичных хромосом."}, {"section": "explain", "points": 2, "kind": "text", "title": "Анализирующее скрещивание", "text": "Заполни две формулировки.", "answers": {"С кем скрещивают проверяемую особь?": ["с рецессивной гомозиготой", "с рецессивной дигомозиготой", "с рецессивной особью"], "Зачем проводят анализирующее скрещивание?": ["чтобы определить генотип особи с доминантным фенотипом", "для определения генотипа особи с доминантным фенотипом", "определить генотип"]}, "hint": "Анализирующее скрещивание показывает, скрывается ли рецессивный аллель у особи с доминантным фенотипом."}, {"section": "explain", "points": 2, "kind": "text", "title": "Пояснение летальности", "text": "В потомстве вместо 3:1 получилось 2:1. Что нужно написать в пояснении?", "answers": {"Причина расщепления": ["гибель эмбрионов с определенным генотипом", "гибель эмбрионов", "особи с одним генотипом погибают"]}, "hint": "Пиши не просто «летальность», а какой генотип не выживает, если это можно определить."}, {"section": "practice", "points": 4, "kind": "text", "title": "Морские свинки: два скрещивания", "text": "По мотивам задачи 28: белый гладкий самец × чёрная мохнатая самка даёт белых мохнатых и чёрных мохнатых; белый гладкий самец × чёрная гладкая самка даёт всё потомство чёрное гладкое.", "answers": {"Доминантная окраска": ["черная", "чёрная"], "Доминантный тип шерсти": ["гладкая", "гладкошерстность"], "Генотип белого гладкого самца": ["aaBB", "aaBb"], "Какой закон надо назвать?": ["закон независимого наследования", "третий закон Менделя", "независимое наследование"]}, "hint": "Если всё потомство во втором скрещивании чёрное гладкое, у самки могут быть доминантные гомозиготы по соответствующим признакам."}, {"section": "practice", "points": 4, "kind": "text", "title": "Кошки: два летальных доминантных аллеля", "text": "Короткие лапы и короткий хвост проявляются у гетерозигот, а доминантные гомозиготы погибают. В F₁ есть AaBb. Скрестили AaBb × AaBb. Какое фенотипическое расщепление среди живых потомков?", "answers": {"Короткие лапы, короткий хвост": ["4"], "Короткие лапы, нормальный хвост": ["2"], "Нормальные лапы, короткий хвост": ["2"], "Нормальные лапы, нормальный хвост": ["1"]}, "hint": "Обычная решётка 9:3:3:1 искажается: все AABB, AABb, AaBB, AAbb, aaBB с летальной доминантной гомозиготой по одному из генов не выживают. Среди живых выходит 4:2:2:1."}, {"section": "practice", "points": 4, "kind": "text", "title": "Мыши: укороченный хвост и гибель aa", "text": "Длина хвоста: BB — длинный хвост, Bb — укороченный хвост, bb — гибель. Окраска тела: A — чёрная, a — коричневая. Во втором скрещивании взяли чёрных мышей с укороченным хвостом.", "answers": {"Какой генотип хвоста у укороченных родителей?": ["Bb"], "Почему расщепление искажено?": ["bb погибают", "гибель bb", "особи bb погибают"], "Какой тип ловушки?": ["летальный генотип", "летальный аллель", "летальность"], "Что обязательно пояснить?": ["гибель на эмбриональной стадии", "эмбриональная гибель"]}, "hint": "Укороченный хвост — гетерозигота. Если bb не выживает, часть потомства исчезает из наблюдаемого расщепления."}, {"section": "practice", "points": 3, "kind": "text", "title": "Кошки: множественный аллелизм", "text": "Окраска шерсти контролируется серией аллелей C, cˢ, c. Серая кошка × сиамский кот дали серых и сиамских котят примерно 1:1.", "answers": {"Тип наследования окраски": ["множественный аллелизм", "множественные аллели"], "Что означает соотношение 1:1?": ["анализирующее скрещивание", "один родитель гетерозиготен", "скрещивание с рецессивной гомозиготой"], "Что нужно указать в решении?": ["все возможные генотипы родителей", "генотипы родителей и потомства", "возможные генотипы"]}, "hint": "Если у одного гена серия аллелей, обязательно аккуратно записывай все возможные генотипы."}];
+const SECTION_NAMES = {"terms": "2. Термины", "markers": "3. Фразы-маркеры", "schemes": "4. Схемы и гаметы", "ratios": "5. Расщепления", "special": "6. Ловушки", "explain": "7. Пояснения", "practice": "8. Задачи 28 линии"};
+const state = { score: 0, max: TASKS.reduce((sum, task) => sum + task.points, 0), results: new Map() };
+
+function esc(value) {
+  return String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+}
+
+function renderTasks() {
+  TASKS.forEach((task, index) => {
+    const holder = document.querySelector(`.tasks[data-section="${task.section}"]`);
+    if (!holder) return;
+
+    const card = document.createElement('div');
+    card.className = 'task-card';
+    card.dataset.task = 'task' + index;
+    card.dataset.points = task.points;
+
+    let body = '';
+    if (task.kind === 'single') {
+      body = `<div class="options" data-answer="${esc(task.answer)}">` + task.options.map(option => `<button class="option">${esc(option)}</button>`).join('') + `</div>`;
+    }
+
+    if (task.kind === 'sort') {
+      const options = task.options.map(option => `<option>${esc(option)}</option>`).join('');
+      body = `<div class="sort-grid" data-answer='${esc(JSON.stringify(task.answers))}'>` +
+        Object.keys(task.answers).map(prompt => `<div class="sort-item"><strong>${esc(prompt)}</strong><select><option>выбери</option>${options}</select></div>`).join('') +
+        `</div>`;
+    }
+
+    if (task.kind === 'text') {
+      body = `<div class="answer-grid two text-grid" data-answer='${esc(JSON.stringify(task.answers))}'>` +
+        Object.keys(task.answers).map(prompt => `<div class="answer-box"><label>${esc(prompt)}</label><input type="text" placeholder="введи ответ"></div>`).join('') +
+        `</div>`;
+    }
+
+    const hintButton = task.hint ? `<button class="ghost" data-action="hint" data-hint="${esc(task.hint)}">Подсказка</button>` : '';
+    card.innerHTML = `
+      <div class="task-top">
+        <div class="task-head"><div class="task-number">${index + 1}</div><div><p class="task-title">${esc(task.title)}</p><p class="task-text">${esc(task.text)}</p></div></div>
+        <div class="points">${task.points} балл.</div>
+      </div>
+      ${body}
+      <div class="actions"><button class="primary" data-action="check">Проверить</button>${hintButton}</div>
+      <div class="feedback"></div>
+    `;
+    holder.appendChild(card);
+  });
+}
+
+function normalize(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/ё/g, 'е')
+    .replace(/[–—]/g, '-')
+    .replace(/,/g, '.')
+    .replace(/×/g, 'x')
+    .replace(/%/g, '')
+    .replace(/\s+/g, '');
+}
+
+function getTask(button) { return button.closest('.task-card'); }
+function getTaskData(card) { return TASKS[Number(card.dataset.task.replace('task', ''))]; }
+
+function showFeedback(card, type, text) {
+  const feedback = card.querySelector('.feedback');
+  feedback.className = 'feedback show ' + type;
+  feedback.innerHTML = text;
+}
+
+function record(card, isCorrect, responses) {
+  const task = getTaskData(card);
+  state.results.set(card.dataset.task, {
+    title: task.title,
+    section: task.section,
+    points: task.points,
+    earned: isCorrect ? task.points : 0,
+    isCorrect,
+    checkedAt: new Date().toLocaleString('ru-RU'),
+    responses
+  });
+}
+
+function check(card) {
+  const task = getTaskData(card);
+  let ok = true;
+  const responses = [];
+  const details = [];
+
+  if (task.kind === 'single') {
+    const selected = card.querySelector('.option.selected');
+    if (!selected) {
+      showFeedback(card, 'neutral', 'Сначала выбери вариант.');
+      return;
+    }
+    ok = selected.textContent.trim() === task.answer;
+    card.querySelectorAll('.option').forEach(option => {
+      option.classList.remove('correct', 'wrong');
+      if (option.textContent.trim() === task.answer) option.classList.add('correct');
+    });
+    if (!ok) selected.classList.add('wrong');
+    responses.push({ prompt: 'Выбранный вариант', studentAnswer: selected.textContent.trim(), correctAnswer: task.answer });
+  }
+
+  if (task.kind === 'sort') {
+    card.querySelectorAll('.sort-item').forEach(item => {
+      const prompt = item.querySelector('strong').textContent.trim();
+      const select = item.querySelector('select');
+      const value = select.value;
+      const correct = task.answers[prompt];
+      const good = value === correct;
+      if (!good) ok = false;
+      select.style.borderColor = good ? 'var(--pea)' : 'var(--red)';
+      select.style.background = good ? 'var(--pea-soft)' : 'var(--red-soft)';
+      responses.push({ prompt, studentAnswer: value, correctAnswer: correct });
+      details.push(`${prompt} — ${correct}`);
+    });
+  }
+
+  if (task.kind === 'text') {
+    card.querySelectorAll('.answer-box').forEach(box => {
+      const prompt = box.querySelector('label').textContent.trim();
+      const input = box.querySelector('input');
+      const value = input.value.trim();
+      const correctList = task.answers[prompt];
+      const good = correctList.map(normalize).includes(normalize(value));
+      if (!good) ok = false;
+      input.style.borderColor = good ? 'var(--pea)' : 'var(--red)';
+      input.style.background = good ? 'var(--pea-soft)' : 'var(--red-soft)';
+      responses.push({ prompt, studentAnswer: value || '—', correctAnswer: correctList[0] });
+      details.push(`${prompt}: ${correctList[0]}`);
+    });
+  }
+
+  record(card, ok, responses);
+  showFeedback(card, ok ? 'good' : 'bad', ok ? 'Верно.' : 'Нужно поправить. Правильные ответы: <strong>' + (details.length ? details.join('; ') : task.answer) + '</strong>.');
+  updateScore();
+}
+
+function updateScore() {
+  state.score = 0;
+  state.results.forEach(result => { if (result.isCorrect) state.score += result.points; });
+  document.getElementById('score').textContent = state.score;
+  document.getElementById('maxScore').textContent = state.max;
+  document.getElementById('finalScore').textContent = state.score;
+  document.getElementById('finalMax').textContent = state.max;
+  const percent = state.max ? Math.round(state.score / state.max * 100) : 0;
+  document.getElementById('progressBar').style.width = percent + '%';
+  document.getElementById('progressText').textContent = state.results.size ? `Проверено заданий: ${state.results.size}. Прогресс: ${percent}%.` : 'Пока ничего не проверено.';
+  const comment = document.getElementById('finalComment');
+  if (state.results.size === 0) comment.textContent = 'Пройди задания, чтобы увидеть итог.';
+  else if (percent >= 85) comment.textContent = 'Отлично: можно переходить к смешанным задачам 28 линии.';
+  else if (percent >= 55) comment.textContent = 'Уже неплохо, но стоит повторить ловушки: летальность, неполное доминирование, множественный аллелизм.';
+  else comment.textContent = 'Пока лучше закрепить базу: термины, гаметы и расщепления.';
+}
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+  document.querySelectorAll('.tab').forEach(tab => tab.classList.toggle('active', tab.dataset.sectionTarget === id));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function collectCurrentResponses(card) {
+  const rows = [];
+  const selected = card.querySelector('.option.selected');
+  if (selected) rows.push({ prompt: 'Выбранный вариант', studentAnswer: selected.textContent.trim(), correctAnswer: card.querySelector('.options')?.dataset.answer || 'не проверено' });
+
+  card.querySelectorAll('.sort-item').forEach(item => {
+    const prompt = item.querySelector('strong')?.textContent.trim() || '';
+    const select = item.querySelector('select');
+    if (prompt && select && select.value !== 'выбери') rows.push({ prompt, studentAnswer: select.value, correctAnswer: 'не проверено' });
+  });
+
+  card.querySelectorAll('.answer-box').forEach(box => {
+    const prompt = box.querySelector('label')?.textContent.trim() || '';
+    const input = box.querySelector('input');
+    if (prompt && input && input.value.trim()) rows.push({ prompt, studentAnswer: input.value.trim(), correctAnswer: 'не проверено' });
+  });
+
+  return rows;
+}
+
+function buildReport() {
+  const name = document.getElementById('studentName').value.trim() || 'без имени';
+  const percent = state.max ? Math.round(state.score / state.max * 100) : 0;
+  const correctCount = Array.from(state.results.values()).filter(result => result.isCorrect).length;
+  const incorrectCount = Array.from(state.results.values()).filter(result => !result.isCorrect).length;
+  const lines = [
+    'ОТЧЁТ ПО ТРЕНАЖЁРУ',
+    'Тренажёр: менделевские законы',
+    '',
+    `Имя ученика: ${name}`,
+    `Дата и время: ${new Date().toLocaleString('ru-RU')}`,
+    `Итоговый балл: ${state.score}/${state.max} (${percent}%)`,
+    `Проверено заданий: ${state.results.size}`,
+    `Верно: ${correctCount}`,
+    `С ошибками: ${incorrectCount}`,
+    '',
+    'РЕЗУЛЬТАТЫ ПО ЗАДАНИЯМ'
+  ];
+
+  TASKS.forEach((task, index) => {
+    const result = state.results.get('task' + index);
+    const responses = result ? result.responses : collectCurrentResponses(document.querySelector(`[data-task="task${index}"]`));
+    lines.push('', `${index + 1}. ${task.title}`, `Раздел: ${SECTION_NAMES[task.section] || task.section}`, `Статус: ${result ? (result.isCorrect ? 'ВЕРНО' : 'ОШИБКА') : 'НЕ ПРОВЕРЕНО'}`, `Баллы: ${result ? result.earned : 0}/${task.points}`);
+    if (result?.checkedAt) lines.push(`Проверено: ${result.checkedAt}`);
+    if (responses.length) {
+      lines.push('Ответы:');
+      responses.forEach(row => lines.push(`- ${row.prompt}`, `  Ответ ученика: ${row.studentAnswer || '—'}`, `  Правильный ответ: ${row.correctAnswer || '—'}`));
+    } else {
+      lines.push('Ответы: не введены / не выбраны');
+    }
+  });
+
+  return lines.join('\n');
+}
+
+async function copyReport() {
+  const report = buildReport();
+  try {
+    await navigator.clipboard.writeText(report);
+  } catch (error) {
+    const textarea = document.createElement('textarea');
+    textarea.value = report;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    textarea.remove();
+  }
+  document.getElementById('reportStatus').textContent = 'Отчёт скопирован. Теперь его можно вставить в сообщение.';
+}
+
+function downloadReport() {
+  const name = (document.getElementById('studentName').value.trim() || 'student').replace(/[\\/:*?"<>|]+/g, '_').replace(/\s+/g, '_');
+  const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+  const blob = new Blob([buildReport()], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `mendelian_report_${name}_${stamp}.txt`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  document.getElementById('reportStatus').textContent = 'Отчёт скачан файлом.';
+}
+
+function resetAll() {
+  state.results = new Map();
+  state.score = 0;
+  document.querySelectorAll('.option').forEach(option => option.classList.remove('selected', 'correct', 'wrong'));
+  document.querySelectorAll('input:not(#studentName)').forEach(input => { input.value = ''; input.style.borderColor = ''; input.style.background = ''; });
+  document.querySelectorAll('select').forEach(select => { select.selectedIndex = 0; select.style.borderColor = ''; select.style.background = ''; });
+  document.querySelectorAll('.feedback').forEach(feedback => { feedback.className = 'feedback'; feedback.textContent = ''; });
+  updateScore();
+  showSection('map');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderTasks();
+  updateScore();
+
+  document.addEventListener('click', event => {
+    const button = event.target.closest('button');
+    if (!button) return;
+    if (button.dataset.sectionTarget) showSection(button.dataset.sectionTarget);
+    if (button.dataset.action === 'check') check(button.closest('.task-card'));
+    if (button.dataset.action === 'hint') {
+      const card = button.closest('.task-card');
+      showFeedback(card, 'neutral', 'Подсказка: ' + button.dataset.hint);
+    }
+    if (button.dataset.action === 'reset') resetAll();
+    if (button.dataset.action === 'copy-report') copyReport();
+    if (button.dataset.action === 'download-report') downloadReport();
+  });
+
+  document.addEventListener('click', event => {
+    const option = event.target.closest('.option');
+    if (!option) return;
+    const group = option.closest('.options');
+    group.querySelectorAll('.option').forEach(item => item.classList.remove('selected'));
+    option.classList.add('selected');
+  });
+
+  console.assert(TASKS.length >= 25, 'В тренажёре должно быть много заданий');
+  console.assert(typeof buildReport === 'function', 'Отчёт должен собираться');
+});
+</script>
+</body>
+</html>
